@@ -2,8 +2,6 @@ import {
   Handle,
   NodeProps,
   Position,
-  useReactFlow,
-  useStoreApi,
 } from "reactflow";
 import {
   Checkbox,
@@ -16,8 +14,10 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import theme from "../theme";
+import { useReactFlowContext } from "../contexts/reactflowContext";
+import { getLayoutedElements, positionInitial } from "../utils/reactflowFunction";
 
 interface props extends NodeProps {
   value: string;
@@ -39,33 +39,39 @@ const names = [
 ];
 
 function SelectItem(props: props) {
-  const [personName, setPersonName] = useState<string[]>([]);
+  const [companies, setCompanies] = useState<string[]>([]);
+  const { edges, nodes, setEdges, setNodes, newWidth, newHeight } = useReactFlowContext()
 
-  const { setNodes } = useReactFlow();
-  const store = useStoreApi();
+  const handleChange = (event: SelectChangeEvent<typeof companies>) => {
+    const { target: { value } } = event;
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
-    const { nodeInternals } = store.getState();
-    const {
-      target: { value },
-    } = event;
-    setPersonName(typeof value === "string" ? value.split(",") : value);
-    setNodes(
-      Array.from(nodeInternals.values()).map((node) => {
-        if (node.id === props.nodeId) {
-          node.data = {
-            ...node.data,
-            selects: {
-              ...node.data.selects,
-              [props.handleId]: event.target.value,
-            },
-          };
-        }
-
-        return node;
-      })
-    );
+    setCompanies(typeof value === "string" ? value.split(",") : value);
+    
   };
+
+  useEffect(() => {
+    if(companies.length > 0 ){
+      const newNode = [
+        ...nodes,
+        { id: '2', type: 'buttom', data: { label: 'Button start to add event' }, position: positionInitial}
+      ]
+      const newEdge = [
+        ...edges,
+        { id: 'e1-2', source: '1', target: '2' }
+      ]
+
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        newNode,
+        newEdge,
+        newWidth, 
+        newHeight
+      );
+
+      setNodes([...layoutedNodes]);
+      setEdges([...layoutedEdges]);
+    }
+
+  },[companies])
 
   return (
     <Box
@@ -81,15 +87,15 @@ function SelectItem(props: props) {
           labelId="demo-multiple-checkbox-label"
           className="nodrag"
           multiple
-          value={personName}
+          value={companies}
           onChange={handleChange}
           input={<OutlinedInput label="Empresas" />}
           renderValue={(selected) => selected.join(", ")}
-          sx={{ minWidth: "20rem", zIndex: 99999 }}
+          sx={{maxWidth: 450, width: 120}}
         >
           {names.map((name) => (
             <MenuItem key={name} value={name}>
-              <Checkbox checked={personName.indexOf(name) > -1} />
+              <Checkbox checked={companies.indexOf(name) > -1} />
               <ListItemText primary={name} />
             </MenuItem>
           ))}
@@ -113,7 +119,7 @@ function SelectItem(props: props) {
 
 function SelectType(props: NodeProps) {
   return (
-    <div className="custom-node__body">
+    <Box width={'auto'}>
       {Object.keys(props.data.selects).map((handleId) => (
         <SelectItem
           {...props}
@@ -123,7 +129,7 @@ function SelectType(props: NodeProps) {
           handleId={handleId}
         />
       ))}
-    </div>
+    </Box>
   );
 }
 
