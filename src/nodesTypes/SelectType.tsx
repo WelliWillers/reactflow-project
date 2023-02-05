@@ -16,8 +16,7 @@ import {
 import { Box } from "@mui/system";
 import { memo, useEffect, useState } from "react";
 import theme from "../theme";
-import { useReactFlowContext } from "../contexts/reactflowContext";
-import { getLayoutedElements, positionInitial } from "../utils/reactflowFunction";
+import { useReactFlowContext } from "../contexts/ReactflowContext";
 
 interface props extends NodeProps {
   value: string;
@@ -26,62 +25,38 @@ interface props extends NodeProps {
 }
 
 const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
+  "Empresa 1",
+  "Empresa 2",
+  "Empresa 3",
+  "Empresa 4",
 ];
 
 function SelectItem(props: props) {
   const [companies, setCompanies] = useState<string[]>([]);
-  const { edges, nodes, setEdges, setNodes, newWidth, newHeight } = useReactFlowContext()
+  const { nodes, newWidth, addEvent } = useReactFlowContext()
 
   const handleChange = (event: SelectChangeEvent<typeof companies>) => {
     const { target: { value } } = event;
 
     setCompanies(typeof value === "string" ? value.split(",") : value);
-    
   };
 
   useEffect(() => {
-    if(companies.length > 0 ){
-      const newNode = [
-        ...nodes,
-        { id: '2', type: 'buttom', data: { label: 'Button start to add event' }, position: positionInitial}
-      ]
-      const newEdge = [
-        ...edges,
-        { id: 'e1-2', source: '1', target: '2' }
-      ]
-
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-        newNode,
-        newEdge,
-        newWidth, 
-        newHeight
-      );
-
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
+    if(companies.length == 1 ){
+      addEvent(props.id, String(nodes.length + 1), 'buttom', 'firstEvent')
     }
-
   },[companies])
 
   return (
     <Box
-      bgcolor={theme.palette.primary.contrastText}
+      bgcolor={theme.palette.grey[100]}
       boxShadow={props.selected ? `0 0 10px -1.5px ${theme.palette.primary.main}` : `0 0 10px -1.5px ${theme.palette.grey[500]}`}
       borderColor={theme.palette.success.main}
       borderRadius={2}
       padding={5}
+      width={newWidth}
     >
-      <FormControl sx={{ position: "relative" }}>
+      <FormControl sx={{ position: "relative", width: '100%' }}>
         <InputLabel id="demo-multiple-checkbox-label">Empresas</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
@@ -91,7 +66,6 @@ function SelectItem(props: props) {
           onChange={handleChange}
           input={<OutlinedInput label="Empresas" />}
           renderValue={(selected) => selected.join(", ")}
-          sx={{maxWidth: 450, width: 120}}
         >
           {names.map((name) => (
             <MenuItem key={name} value={name}>

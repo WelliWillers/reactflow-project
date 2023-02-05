@@ -1,4 +1,6 @@
+import { color } from "@mui/system";
 import { EdgeProps, getSmoothStepPath } from "reactflow";
+import theme from "../theme";
 
 export default function DefaultEdge({
   id,
@@ -9,7 +11,6 @@ export default function DefaultEdge({
   sourcePosition,
   targetPosition,
   style = {},
-  data,
   markerEnd,
 }: EdgeProps) {
   const [edgePath] = getSmoothStepPath({
@@ -25,16 +26,11 @@ export default function DefaultEdge({
     <>
       <path
         id={id}
-        style={style}
+        style={{...style, stroke: theme.palette.primary.main}}
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
       />
-      <p>
-        <textPath href={`#${id}`} style={{ fontSize: 12 }} startOffset="50%" textAnchor="middle">
-          adwawdawd
-        </textPath>
-      </p>
     </>
   );
 }

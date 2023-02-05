@@ -17,7 +17,7 @@ import InfoType from '../nodesTypes/MenusNodeTypes/InfoType';
 import LinkType from '../nodesTypes/MenusNodeTypes/LinkType';
 import ShedulingRobotType from '../nodesTypes/MenusNodeTypes/ShedulingRobotType';
 import MenuType from '../nodesTypes/MenusNodeTypes/MenuType';
-import { useReactFlowContext } from '../contexts/reactflowContext';
+import AddSegmentation from '../nodesTypes/AddSegmentation';
 
 export const NODE_TYPES = {
   buttom: ButtonType,
@@ -27,7 +27,8 @@ export const NODE_TYPES = {
   infoType: InfoType,
   linkType: LinkType,
   shedulingRobotType: ShedulingRobotType,
-  menuType: MenuType
+  menuType: MenuType,
+  addSegmentation: AddSegmentation
 }
 
 export const EDGE_TYPES = {
@@ -37,6 +38,8 @@ export const EDGE_TYPES = {
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
+export const startWidth = 300
+export const startHeight = 200
 export const positionInitial = { x: 0, y: 0 }
 
 const initialNodes: Node[] = [
@@ -46,37 +49,37 @@ const initialNodes: Node[] = [
 const initialEdges: Edge[] = [];
 
 export const getLayoutedElements = (nodes: Node[], edges: Edge[], newWidth: number, newHeight:number) => {
-    dagreGraph.setGraph({ rankdir: 'TB' });
+  dagreGraph.setGraph({ rankdir: 'TB' });
 
-    nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, { width: newWidth, height: newHeight });
-    });
+  nodes.forEach((node) => {
+    dagreGraph.setNode(node.id, { width: newWidth, height: newHeight });
+  });
 
-    edges.forEach((edge) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-    });
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
 
-    dagre.layout(dagreGraph);
+  dagre.layout(dagreGraph);
 
-    nodes.forEach((node) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
-        node.targetPosition = Position.Top;
-        node.sourcePosition = Position.Bottom;
+  nodes.forEach((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    node.targetPosition = Position.Top;
+    node.sourcePosition = Position.Bottom;
 
-        node.position = {
-            x: nodeWithPosition.x - newWidth / 2,
-            y: nodeWithPosition.y - newHeight / 2,
-        };
+    node.position = {
+      x: nodeWithPosition.x - newWidth / 2,
+      y: nodeWithPosition.y - newHeight / 2,
+    };
 
-        return node;
-    });
+    return node;
+  });
 
-    return { nodes, edges };
+  return { nodes, edges };
 };
 
 export const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
   initialNodes,
   initialEdges,
-  400,
-  200
+  startWidth,
+  startHeight
 );

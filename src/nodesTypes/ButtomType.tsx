@@ -3,18 +3,18 @@ import { Box, Button } from "@mui/material";
 import { Handle, NodeProps, Position } from "reactflow";
 import theme from "../theme";
 import AddIcon from '@mui/icons-material/Add';
-import { useReactFlowContext } from "../contexts/reactflowContext";
+import { useReactFlowContext } from "../contexts/ReactflowContext";
 
 export default function ButtonType(props: NodeProps) {
-  const { addEvent, nodes } = useReactFlowContext()
+  const { addEvent, nodes, newWidth } = useReactFlowContext()
 
   return (
     <Button
-      color="secondary"
+      color="primary"
       variant="contained"
       startIcon={<AddIcon />}
-      sx={{ color: theme.palette.success.contrastText}}
-      onClick={() => addEvent(props.id, String(nodes.length + 1), 'event')}
+      sx={{ color: theme.palette.success.contrastText, width: newWidth  }}
+      onClick={() => addEvent(props.id, String(nodes.length + 1), 'event', props.data.idHelper)}
     >
       <Handle
         style={{
