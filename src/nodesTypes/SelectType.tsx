@@ -17,6 +17,8 @@ import { Box } from "@mui/system";
 import { memo, useEffect, useState } from "react";
 import theme from "../theme";
 import { useReactFlowContext } from "../contexts/ReactflowContext";
+import HandleBase from "../components/reactFlow/HandleBase";
+import BoxReactFlowModel from "../components/reactFlow/BoxModel";
 
 interface props extends NodeProps {
   value: string;
@@ -48,14 +50,7 @@ function SelectItem(props: props) {
   },[companies])
 
   return (
-    <Box
-      bgcolor={theme.palette.grey[100]}
-      boxShadow={props.selected ? `0 0 10px -1.5px ${theme.palette.primary.main}` : `0 0 10px -1.5px ${theme.palette.grey[500]}`}
-      borderColor={theme.palette.success.main}
-      borderRadius={2}
-      padding={5}
-      width={newWidth}
-    >
+    <BoxReactFlowModel props={props} selected={props.selected}>
       <FormControl sx={{ position: "relative", width: '100%' }}>
         <InputLabel id="demo-multiple-checkbox-label">Empresas</InputLabel>
         <Select
@@ -76,18 +71,8 @@ function SelectItem(props: props) {
         </Select>
       </FormControl>
 
-      <Handle
-        style={{
-          width: "10px",
-          height: "10px",
-          marginBottom: "-20px",
-          backgroundColor: theme.palette.success.main,
-        }}
-        id="bottom"
-        type={"source"}
-        position={Position.Bottom}
-      />
-    </Box>
+      <HandleBase type="source" idItem={props.id} position={Position.Bottom} />
+    </BoxReactFlowModel>
   );
 }
 

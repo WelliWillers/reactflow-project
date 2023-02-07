@@ -15,7 +15,9 @@ import {
   NodeChange,
   useEdgesState,
   useNodesState,
+  OnNodesDelete
 } from "reactflow";
+
 import {
   getLayoutedElements,
   layoutedEdges,
@@ -34,13 +36,14 @@ type ReactFlowContextType = {
     type: keyof typeof NODE_TYPES,
     sourceHandle?: string
   ) => void;
+  removeNodeAndEdge: (idNode: string) => void
   onNodesChange: (OnChange: NodeChange[]) => void;
   onEdgesChange: (OnChange: EdgeChange[]) => void;
   nodes: Node<Node<any, string | undefined>[], string | undefined>[];
   edges: Edge<Edge<any>[]>[];
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
-  setNewWidth: (number: number) => void;
+  handleSetNewWidth: (number: number) => void;
   handleSetNewHeight: (number: number) => void;
   newWidth: number;
   newHeight: number;
@@ -87,7 +90,7 @@ export function ReactFlowContextProvider({
     const newEdge = [
       ...edges,
       {
-        id: `e${idSourse}-${helperId && type != 'buttom' ? `${helperId}-${idTarget}` : idTarget}`,
+        id: `e-${idSourse}-${helperId && type != 'buttom' ? `${helperId}-${idTarget}` : idTarget}`,
         source: idSourse,
         target: helperId && type != 'buttom' ? `${helperId}-${idTarget}` : idTarget,
       },
@@ -104,7 +107,8 @@ export function ReactFlowContextProvider({
     setEdges([...layoutedEdges]);
   }
 
-  function removeNodeAndEdge(idNode: string, idEdge: string) {
+  function removeNodeAndEdge(idNode: string) {
+    alert(idNode)
     // const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     //     newNode,
     //     newEdge,
@@ -118,8 +122,12 @@ export function ReactFlowContextProvider({
   console.log("nodes", nodes);
   console.log("edges", edges);
 
-  function handleSetNewHeight(newValue: number) {
+  function handleSetNewWidth(newValue: number) {
     setNewWidth(newValue);
+  }
+
+  function handleSetNewHeight(newValue: number) {
+    setNewHeight(newValue);
   }
 
   return (
@@ -133,10 +141,11 @@ export function ReactFlowContextProvider({
         edges,
         setNodes,
         setEdges,
-        setNewWidth,
         handleSetNewHeight,
+        handleSetNewWidth,
         newWidth,
         newHeight,
+        removeNodeAndEdge
       }}
     >
       {children}

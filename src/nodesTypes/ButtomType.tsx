@@ -4,6 +4,7 @@ import { Handle, NodeProps, Position } from "reactflow";
 import theme from "../theme";
 import AddIcon from '@mui/icons-material/Add';
 import { useReactFlowContext } from "../contexts/ReactflowContext";
+import HandleBase from "../components/reactFlow/HandleBase";
 
 export default function ButtonType(props: NodeProps) {
   const { addEvent, nodes, newWidth } = useReactFlowContext()
@@ -16,30 +17,10 @@ export default function ButtonType(props: NodeProps) {
       sx={{ color: theme.palette.success.contrastText, width: newWidth  }}
       onClick={() => addEvent(props.id, String(nodes.length + 1), 'event', props.data.idHelper)}
     >
-      <Handle
-        style={{
-          width: "10px",
-          height: "10px",
-          marginTop: "-20px",
-          backgroundColor: theme.palette.success.main,
-        }}
-        id="top"
-        type={"target"}
-        position={Position.Top}
-      />
+      <HandleBase type="target" idItem={props.id} position={Position.Top} />
+      <HandleBase type="source" idItem={props.id} position={Position.Bottom} />
 
-      <Handle
-        style={{
-          width: "10px",
-          height: "10px",
-          marginBottom: "-20px",
-          backgroundColor: theme.palette.success.main,
-        }}
-        id="bottom"
-        type={"source"}
-        position={Position.Bottom}
-      />
-      Adicionar evento
+      Adicionar opção
     </Button>
   );
 }
